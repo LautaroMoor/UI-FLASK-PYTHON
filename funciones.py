@@ -274,3 +274,153 @@ el director fue {director["nombre"]}, el genero es {genero["nombre"]}\
         print('Error al buscar comentario, no encontrado')
         print("=====================")
     input('Ingrese enter para continuar...')
+
+#MENU COMENTARIOS OPCION 6
+def menuComentarios():
+    opcion = 0
+    while not(opcion>=1 and opcion<=5):
+        system("cls")
+        print('=====================')
+        print("1) Agregar un comentario.")
+        print("2) Eliminar un comentario.")
+        print("3) Editar un comentario.")
+        print("4) Salir")
+        print('=====================')
+        opcion = int(input('Ingrese opcion: '))
+    return opcion
+
+#Opcion 6 opcion 1 MODIFICADO
+def agregarComentario(idUsuario):
+    peliculasData = requests.get('http://127.0.0.1:5000/peliculas')
+    peliculas = peliculasData.json()
+    agregar = input("Ingrese ID de la pelicula: ")
+    encontrado = False
+    
+    for pelicula in peliculas:
+        if pelicula["id"] == agregar:
+            encontrado = True
+            comentario = input("¿Que comentario quiere agregar?: ")
+            nuevoComentario={"id":"","idUsuario":idUsuario,"comentario":comentario}
+            datos = requests.post(f'http://127.0.0.1:5000/comentario/create/idPelicula/{agregar}', json=nuevoComentario)
+            mensaje = datos.text
+            print("=====================")
+            print(mensaje)
+            print("=====================")
+    
+    if encontrado == False:
+        print("=====================")
+        print('Error al crear el comentario')
+        print("=====================")
+            
+    input('Ingrese enter para continuar...')
+
+#Opcion 6 opcion 2 MODIFICADO
+def eliminarComentario(idUsuario):
+    system("cls")
+    #Lista de comentarios by idUsuario
+    comentariosUsuarioData = requests.get(f"http://127.0.0.1:5000/comentario/idUsuario/{idUsuario}")
+    comentariosUsuario = comentariosUsuarioData.json()
+    encontrada = False
+
+    if len(comentariosUsuario) != 0:
+        for comentario in comentariosUsuario:
+            encontrada = True
+            print('Su lista de comentarios es: ')
+            print('=====================')
+            print("ID=",comentario["id"],"\nComentario:",comentario["comentario"])
+            print('=====================')
+        
+        #Validacion de entrada
+        while True:
+            borrar = input("Ingrese el ID del comentario que desea eliminar(0 para salir): ")
+            if borrar != '0':
+                encontrada2 = False
+                for comentario in comentariosUsuario:
+                    if borrar == comentario["id"]:
+                        encontrada2 = True
+                        break
+
+                if encontrada2 == True:
+                    break
+                else:
+                    system("cls")
+                    print("===================================================")
+                    print('Error, ingreso un numero que no es suyo o no existe')
+                    print("===================================================")
+            else:
+                system("cls")
+                print("===================================================")
+                print('Usted cancelo la eliminacion')
+                print("===================================================")
+
+        if borrar != 0:
+            datos = requests.delete(f"http://127.0.0.1:5000/comentario/idUsuario/{idUsuario}/delete/{borrar}")
+            mensaje = datos.text
+            print("===================================================")
+            print(mensaje)
+            print("===================================================")
+
+    if encontrada == False:
+        system("cls")
+        print("===================================================")
+        print('No tiene comentarios.')
+        print("===================================================")
+    
+    input('Ingrese enter para continuar...')
+
+#Opcion 6 opcion 3 MODIFICADO
+def modificarComentario(idUsuario):
+    listaComentariosUsuario = []
+    encontrada = False
+    #Lista de comentarios by idUsuario
+    comentariosUsuarioData = requests.get(f"http://127.0.0.1:5000/comentario/idUsuario/{idUsuario}")
+    comentariosUsuario = comentariosUsuarioData.json()
+
+    encontrada = False
+    
+    if len(comentariosUsuario) != 0:
+        print('Su lista de comentarios es: ')
+        print('=====================')
+        for comentario in comentariosUsuario:
+            encontrada = True
+            if comentario["idUsuario"] == idUsuario:
+                listaComentariosUsuario.append(comentario["id"])
+                print("ID=",comentario["id"],"\nComentario:",comentario["comentario"])
+                print('=====================')
+
+        #Validacion de entrada
+        while True:
+            modificar = input("Ingrese el ID del comentario que desea modificar: ")
+            encontrada2 = False
+            for comentario in comentariosUsuario:
+                if modificar == comentario["id"]:
+                    encontrada2 = True
+                    break
+
+            if encontrada2 == True:
+                break
+            else:
+                system("cls")
+                print("===================================================")
+                print('Error, ingreso un numero que no es suyo o no existe')
+                print("===================================================")
+
+        while True:
+            comentarioNuevo = input('Ponga su mensaje modificado:')
+            if comentarioNuevo != '':
+                break
+
+        comentarioNuevoLista = {"id":modificar,"idUsuario":idUsuario,"comentario":comentarioNuevo}
+        datos = requests.put('http://127.0.0.1:5000/comentario/save', json=comentarioNuevoLista)
+        mensaje = datos.text
+        print("=====================")
+        print(mensaje)
+        print("=====================")
+
+    if encontrada == False:
+        system("cls")
+        print("===================================================")
+        print('No tiene comentarios.')
+        print("===================================================")
+    
+    input('Ingrese enter para continuar...')
