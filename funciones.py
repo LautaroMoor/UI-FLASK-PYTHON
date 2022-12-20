@@ -424,7 +424,7 @@ def modificarComentario(idUsuario):
         print("===================================================")
     
     input('Ingrese enter para continuar...')
-    
+
 #MENU DIRECTORES MODIFICADO
 def menuDirectores(anterior = None):
     directoresData = requests.get('http://127.0.0.1:5000/directores')
@@ -600,3 +600,22 @@ el director fue {director["nombre"]}, el genero es {genero["nombre"]}\
     else:
         print('Esta pelicula no tiene comentarios\n')
     input('Ingrese enter para continuar...')
+
+#MENU MODIFICAR 
+def menuModificar():
+    opcion = 0
+    while not(opcion>=1 and opcion<=7):
+        system('cls')  
+        print('=====================')
+        print('Menu editor')
+        print('=====================')
+        print('1) Titulo')
+        print('2) Año')
+        print('3) Director')
+        print('4) Generos')
+        print('5) Sinopsis')
+        print('6) Imagen')
+        print('7) Terminar/Salir')
+        print('=====================')
+        opcion = int(input('Opcion: ')) 
+    return opcion
