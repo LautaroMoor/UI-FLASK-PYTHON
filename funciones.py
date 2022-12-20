@@ -424,3 +424,179 @@ def modificarComentario(idUsuario):
         print("===================================================")
     
     input('Ingrese enter para continuar...')
+    
+#MENU DIRECTORES MODIFICADO
+def menuDirectores(anterior = None):
+    directoresData = requests.get('http://127.0.0.1:5000/directores')
+    directores = directoresData.json()
+    system("cls")
+    opcion = 0
+    while not(opcion>=1 and opcion<=contador):
+        contador = 0
+        if anterior != None:
+            for director in directores:
+                if director['id'] == anterior:
+                    print(f'El director actual es {director["nombre"]}')
+        print('=====================')
+        print("Los directores disponibles son:")
+        print('=====================')
+        for director in directores:
+            contador = contador + 1
+            print(f'{director["id"]}) {director["nombre"]}')
+        print('=====================')
+        opcion= int(input("Ingrese opcion: "))
+        if not(opcion>=1 and opcion<=contador):
+            system("cls")
+            print('=====================')
+            print(f"{opcion} no es una ID válida.")
+            print('=====================')
+    return str(opcion)
+
+#MENU GENEROS MODIFICADO
+def menuGeneros(anterior = None):
+    generosData = requests.get('http://127.0.0.1:5000/generos')
+    generos = generosData.json()
+    system("cls")
+    opcion = 0
+    while not(opcion>=1 and opcion<=contador):
+        contador = 0
+        if anterior != None:
+            for genero in generos:
+                if genero['id'] == anterior:
+                    print(f'El genero actual es {genero["nombre"]}')
+        print('=====================')
+        print("Los generos disponibles son:")
+        print('=====================')
+        for genero in generos:
+            contador = contador + 1
+            print(f'{genero["id"]}) {genero["nombre"]}')
+        print('=====================')
+        opcion= int(input("Ingrese opcion: "))
+        if not(opcion>=1 and opcion<=contador):
+            system("cls")
+            print('=====================')
+            print(f"{opcion} no es una ID válida.")
+            print('=====================')
+    return str(opcion)
+
+def getDirectores():
+    directoresData = requests.get('http://127.0.0.1:5000/directores')
+    directores = directoresData.json()
+    system('cls')
+    print('=====================')
+    print("Los directores son:")
+    print('=====================')
+    for director in directores:
+        print(f'{director["id"]}) {director["nombre"]}')
+    input('Ingrese enter para continuar...')
+
+def getGeneros():
+    generosData = requests.get('http://127.0.0.1:5000/generos')
+    generos = generosData.json()
+    system('cls')
+    print('=====================')
+    print("Los generos son:")
+    print('=====================')
+    for genero in generos:
+        print(f'{genero["id"]}) {genero["nombre"]}')
+    input('Ingrese enter para continuar...')
+
+def getPeliculaByDirector():
+    encontrada = False
+    directoresData = requests.get('http://127.0.0.1:5000/directores')
+    directores = directoresData.json()
+
+    idDirector = input('Ingrese la id del director: ')
+    
+    system('cls')
+    for director in directores:
+        if director['id'] == idDirector:
+            encontrada = True
+            break
+        if encontrada == True:
+            break
+
+    if encontrada == True:
+        peliculasByDirectorData = requests.get(f'http://127.0.0.1:5000/peliculas/director/{idDirector}')
+        peliculasByDirector = peliculasByDirectorData.json()
+        print('=====================')
+        print("Las peliculas segun el director es:")
+        print('=====================')
+        for pelicula in peliculasByDirector:
+            generoData = requests.get(f'http://127.0.0.1:5000/generos/{pelicula["idGenero"]}')
+            genero = generoData.json()
+            print(f'ID {pelicula["id"]} = La pelicula "{pelicula["titulo"]}" salio en el año {pelicula["ano"]}, el genero es {genero["nombre"]}\
+, la sinopsis es "{pelicula["sinopsis"]}" y la imagen es {pelicula["imagen"]}')
+    else:
+        print('=====================')
+        print("Director no encontrado")
+        print('=====================')
+    input('Ingrese enter para continuar...')
+
+def getPeliculaByPortada():
+    peliculasByPortadaData = requests.get(f'http://127.0.0.1:5000/peliculas/imagen')
+    peliculasByPortada = peliculasByPortadaData.json()
+    print('=====================')
+    print("Las peliculas con portada son:")
+    print('=====================')
+    for pelicula in peliculasByPortada:
+        directorData = requests.get(f'http://127.0.0.1:5000/directores/{pelicula["idDirector"]}')
+        director = directorData.json()
+        generoData = requests.get(f'http://127.0.0.1:5000/generos/{pelicula["idGenero"]}')
+        genero = generoData.json()
+        print(f'ID {pelicula["id"]} = La pelicula "{pelicula["titulo"]}" salio en el año {pelicula["ano"]}, \
+el director fue {director["nombre"]}, el genero es {genero["nombre"]}\
+, la sinopsis es "{pelicula["sinopsis"]}" y la imagen es {pelicula["imagen"]}')
+    input('Ingrese enter para continuar...')
+
+def getPeliculas():
+    peliculasData = requests.get('http://127.0.0.1:5000/peliculas')
+    peliculas = peliculasData.json()
+    system('cls')
+    print('=====================')
+    print("Las peliculas son:")
+    print('=====================')
+    for pelicula in peliculas:
+        directorData = requests.get(f'http://127.0.0.1:5000/directores/{pelicula["idDirector"]}')
+        director = directorData.json()
+        generoData = requests.get(f'http://127.0.0.1:5000/generos/{pelicula["idGenero"]}')
+        genero = generoData.json()
+        print(f'ID {pelicula["id"]} = La pelicula "{pelicula["titulo"]}" salio en el año {pelicula["ano"]}, \
+el director fue {director["nombre"]}, el genero es {genero["nombre"]}\
+, la sinopsis es "{pelicula["sinopsis"]}" y la imagen es {pelicula["imagen"]}\n')
+    input('Ingrese enter para continuar...')
+    input('Ingrese enter para continuar...')
+
+def getPeliculaRandom():
+    system('cls')
+
+    peliculaData = requests.get('http://127.0.0.1:5000/pelicularandom')
+    pelicula = peliculaData.json()
+
+    print('=====================')
+    print(f"La pelicula random es: {pelicula['titulo']}")
+    print('=====================')
+
+    directorData = requests.get(f'http://127.0.0.1:5000/directores/{pelicula["idDirector"]}')
+    director = directorData.json()
+    generoData = requests.get(f'http://127.0.0.1:5000/generos/{pelicula["idGenero"]}')
+    genero = generoData.json()
+
+    print(f'ID {pelicula["id"]} = La pelicula "{pelicula["titulo"]}" salio en el año {pelicula["ano"]}, \
+el director fue {director["nombre"]}, el genero es {genero["nombre"]}\
+, la sinopsis es "{pelicula["sinopsis"]}" y la imagen es {pelicula["imagen"]}\n')
+    contador = 0
+
+    print("=====================")
+    print('COMENTARIOS')
+    print("=====================")
+    if pelicula['idComentarios'] != []:
+        for comentarioActual in pelicula['idComentarios']:
+            comentarioData = requests.get(f'http://127.0.0.1:5000/comentario/{comentarioActual}')
+            comentario = comentarioData.json()
+            contador = contador + 1
+            print(f'{contador}) {comentario["comentario"]}')
+        print('')
+    else:
+        print('Esta pelicula no tiene comentarios\n')
+    input('Ingrese enter para continuar...')
